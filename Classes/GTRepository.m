@@ -680,8 +680,8 @@ static int checkoutNotifyCallback(git_checkout_notify_t why, const char *path, c
 			return NO;
 		}
 	}
-    
-    git_checkout_opts checkoutOptions = GIT_CHECKOUT_OPTS_INIT;
+
+	git_checkout_opts checkoutOptions = GIT_CHECKOUT_OPTS_INIT;
 	
 	checkoutOptions.checkout_strategy = strategy;
 	checkoutOptions.progress_cb = checkoutProgressCallback;
