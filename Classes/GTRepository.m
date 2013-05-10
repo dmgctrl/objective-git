@@ -658,23 +658,17 @@ static int file_status_callback(const char *relativeFilePath, unsigned int gitSt
 	return [[GTSignature alloc] initWithName:name email:email time:[NSDate date]];
 }
 
-static int checkoutNotifyCallback(git_checkout_notify_t why, const char *path, const git_diff_file *baseline, const git_diff_file *target, const git_diff_file *workdir, void *payload)
-{
+static int checkoutNotifyCallback(git_checkout_notify_t why, const char *path, const git_diff_file *baseline, const git_diff_file *target, const git_diff_file *workdir, void *payload) {
 	if (payload == NULL) return 0;
 	int (^block)(GTCheckoutNotify why, NSString* path, GTDiffFile* baseline, GTDiffFile* target, GTDiffFile* workdir) = (__bridge id)payload;
-	NSString *nsPath = (path != NULL ? [NSString stringWithUTF8String:path] : nil);
-    GTDiffFile *gtBaseline = baseline ? [[GTDiffFile alloc] initWithGitDiffFile:*baseline] : nil;
-    GTDiffFile *gtTarget = target ? [[GTDiffFile alloc] initWithGitDiffFile:*target] : nil;
-    GTDiffFile *gtWorkdir = workdir ? [[GTDiffFile alloc] initWithGitDiffFile:*workdir] : nil;
+	NSString *nsPath = @(path);
+	GTDiffFile *gtBaseline = baseline ? [[GTDiffFile alloc] initWithGitDiffFile:*baseline] : nil;
+	GTDiffFile *gtTarget = target ? [[GTDiffFile alloc] initWithGitDiffFile:*target] : nil;
+	GTDiffFile *gtWorkdir = workdir ? [[GTDiffFile alloc] initWithGitDiffFile:*workdir] : nil;
 	return block((GTCheckoutNotify)why, nsPath, gtBaseline, gtTarget, gtWorkdir);
-
 }
 
-- (BOOL)checkout:(NSString *)newTarget
-              strategy:(GTCheckoutStrategy)strategy
-         progressBlock:(void (^)(NSString *path, NSUInteger completedSteps, NSUInteger totalSteps))progressBlock
-           notifyBlock:(int (^)(GTCheckoutNotify why, NSString* path, GTDiffFile* baseline, GTDiffFile* target, GTDiffFile* workdir))notifyBlock
-           notifyFlags:(GTCheckoutNotify)notifyFlags
+- (BOOL)checkout:(NSString *)newTarget strategy:(GTCheckoutStrategy)strategy progressBlock:(void (^)(NSString *path, NSUInteger completedSteps, NSUInteger totalSteps))progressBlock notifyBlock:(int (^)(GTCheckoutNotify why, NSString *path, GTDiffFile *baseline, GTDiffFile *target, GTDiffFile *workdir))notifyBlock notifyFlags:(GTCheckoutNotify)notifyFlags
              withError:(NSError **)error
 {
     GTReference * head = [GTReference referenceByLookingUpReferencedNamed:@"HEAD" inRepository:self error:error];
@@ -682,26 +676,24 @@ static int checkoutNotifyCallback(git_checkout_notify_t why, const char *path, c
         head = [GTReference referenceByCreatingReferenceNamed:@"HEAD" fromReferenceTarget:newTarget inRepository:self error:error];
         if (head == nil) return NO;
     } else {
-        if (![head setTarget:newTarget error:error]) return NO;
+        if (![head setTarget:newTarget error:error]) {
+			return NO;
+		}
     }
-
     
     git_checkout_opts checkoutOptions = GIT_CHECKOUT_OPTS_INIT;
-
-    checkoutOptions.checkout_strategy = strategy;
-    checkoutOptions.progress_cb = checkoutProgressCallback;
-    checkoutOptions.progress_payload = (__bridge void *)progressBlock;
-    
-    checkoutOptions.notify_cb = checkoutNotifyCallback;
-    checkoutOptions.notify_flags = notifyFlags;
-    checkoutOptions.notify_payload = (__bridge void *)notifyBlock;
-
-    int gitError = git_checkout_head(self.git_repository, &checkoutOptions);
-    if (gitError < GIT_OK) {
+	
+	checkoutOptions.checkout_strategy = strategy;
+	checkoutOptions.progress_cb = checkoutProgressCallback;
+	checkoutOptions.progress_payload = (__bridge void *)progressBlock;
+	checkoutOptions.notify_cb = checkoutNotifyCallback;
+	checkoutOptions.notify_flags = notifyFlags;
+	checkoutOptions.notify_payload = (__bridge void *)notifyBlock;
+	
+	int gitError = git_checkout_head(self.git_repository, &checkoutOptions);
+	if (gitError < GIT_OK) {
 		if (error != NULL) *error = [NSError git_errorFor:gitError withAdditionalDescription:@"Failed to checkout tree."];
     }
-    
-
     
 	return gitError == GIT_OK;
 }

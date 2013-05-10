@@ -63,9 +63,9 @@ typedef enum : git_reset_t {
 } GTRepositoryResetType;
 
 typedef enum : git_checkout_strategy_t {
-    GTCheckoutStrategyNone = GIT_CHECKOUT_NONE, /** default is a dry run, no actual updates */
-    GTCheckoutStrategySafe = GIT_CHECKOUT_SAFE, /** Allow safe updates that cannot overwrite uncommitted data */
-    GTCheckoutStrategySafeCreate = GIT_CHECKOUT_SAFE_CREATE, /** Allow safe updates plus creation of missing files */
+	GTCheckoutStrategyNone = GIT_CHECKOUT_NONE, /** default is a dry run, no actual updates */
+	GTCheckoutStrategySafe = GIT_CHECKOUT_SAFE, /** Allow safe updates that cannot overwrite uncommitted data */
+	GTCheckoutStrategySafeCreate = GIT_CHECKOUT_SAFE_CREATE, /** Allow safe updates plus creation of missing files */
 	GTCheckoutStrategyForce = GIT_CHECKOUT_FORCE, /** Allow all updates to force working directory to look like index */
 	GTCheckoutStrategyAllowConflicts = GIT_CHECKOUT_ALLOW_CONFLICTS, /** Allow checkout to make safe updates even if conflicts are found */
 	GTCheckoutStrategyRemoveUntracked = GIT_CHECKOUT_REMOVE_UNTRACKED, /** Remove untracked files not in index (that are not ignored) */
@@ -237,11 +237,6 @@ typedef void (^GTRepositoryStatusBlock)(NSURL *fileURL, GTRepositoryFileStatus s
 // Returns the signature.
 - (GTSignature *)userSignatureForNow;
 
-- (BOOL)checkout:(NSString *)newTarget
-              strategy:(GTCheckoutStrategy)strategy
-         progressBlock:(void (^)(NSString *path, NSUInteger completedSteps, NSUInteger totalSteps))progressBlock
-           notifyBlock:(int (^)(GTCheckoutNotify why, NSString* path, GTDiffFile* baseline, GTDiffFile* target, GTDiffFile* workdir))notifyBlock
-           notifyFlags:(GTCheckoutNotify)notifyFlags
-             withError:(NSError **)error;
+- (BOOL)checkout:(NSString *)newTarget strategy:(GTCheckoutStrategy)strategy progressBlock:(void (^)(NSString *path, NSUInteger completedSteps, NSUInteger totalSteps))progressBlock notifyBlock:(int (^)(GTCheckoutNotify why, NSString *path, GTDiffFile *baseline, GTDiffFile *target, GTDiffFile *workdir))notifyBlock notifyFlags:(GTCheckoutNotify)notifyFlags withError:(NSError **)withError;
 
 @end
