@@ -77,12 +77,12 @@ typedef enum : git_checkout_strategy_t {
 } GTCheckoutStrategy;
 
 typedef enum : git_checkout_notify_t {
-    GTCheckoutNotifyNone = GIT_CHECKOUT_NOTIFY_NONE,
-    GTCheckoutNotifyConflict = GIT_CHECKOUT_NOTIFY_CONFLICT,
-    GTCheckoutNotifyDirty = GIT_CHECKOUT_NOTIFY_DIRTY,
-    GTCheckoutNotifyUpdated = GIT_CHECKOUT_NOTIFY_UPDATED,
-    GTCheckoutNotifyUntracked = GIT_CHECKOUT_NOTIFY_UNTRACKED,
-    GTCheckoutNotifyIgnored = GIT_CHECKOUT_NOTIFY_IGNORED,
+	GTCheckoutNotifyNone = GIT_CHECKOUT_NOTIFY_NONE,
+	GTCheckoutNotifyConflict = GIT_CHECKOUT_NOTIFY_CONFLICT,
+	GTCheckoutNotifyDirty = GIT_CHECKOUT_NOTIFY_DIRTY,
+	GTCheckoutNotifyUpdated = GIT_CHECKOUT_NOTIFY_UPDATED,
+	GTCheckoutNotifyUntracked = GIT_CHECKOUT_NOTIFY_UNTRACKED,
+	GTCheckoutNotifyIgnored = GIT_CHECKOUT_NOTIFY_IGNORED,
 } GTCheckoutNotify;
 
 
