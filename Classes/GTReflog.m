@@ -45,21 +45,26 @@
 #pragma mark Entries
 
 - (BOOL)writeEntryWithCommitter:(GTSignature *)committer message:(NSString *)message error:(NSError **)error {
-	NSParameterAssert(committer != nil);
+	return [self writeEntryWithCommitter:committer message:message oid:self.reference.oid error:error];
+}
 
+- (BOOL)writeEntryWithCommitter:(GTSignature *)committer message:(NSString *)message oid:(const git_oid *)oid error:(NSError **)error
+{
+	NSParameterAssert(committer != nil);
+	
 	// Make sure the reference and reflog are as up-to-date as possible before
 	// we try to write.
 	BOOL success = [self reload:error];
 	if (!success) return NO;
-
-	int status = git_reflog_append(self.git_reflog, self.reference.oid, committer.git_signature, message.UTF8String);
+	
+	int status = git_reflog_append(self.git_reflog, oid, committer.git_signature, message.UTF8String);
 	if (status != GIT_OK) {
 		if (error != NULL) {
 			*error = [NSError git_errorFor:status withAdditionalDescription:@"Could not append to reflog"];
 		}
 		return NO;
 	}
-
+	
 	status = git_reflog_write(self.git_reflog);
 	if (status != GIT_OK) {
 		if (error != NULL) {
@@ -67,7 +72,7 @@
 		}
 		return NO;
 	}
-
+	
 	return YES;
 }
 

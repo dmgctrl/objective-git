@@ -27,6 +27,8 @@
 // Returns whether the entry was successfully written.
 - (BOOL)writeEntryWithCommitter:(GTSignature *)committer message:(NSString *)message error:(NSError **)error;
 
+- (BOOL)writeEntryWithCommitter:(GTSignature *)committer message:(NSString *)message oid:(const git_oid *)oid error:(NSError **)error;
+
 // Get the reflog entry at the given index.
 //
 // index - The reflog entry to get. 0 is the most recent entry. If it is greater
